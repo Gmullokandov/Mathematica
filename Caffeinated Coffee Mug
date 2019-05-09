@@ -1,0 +1,57 @@
+(*To start I made the base of the mug using a simple graphics 3D to make a 
+cylinder that would fit the bottom of the mug.*)
+
+Base = 
+  Graphics3D[
+    Cylinder[{{.3, 0, 0}, {.3, 0, .3}}, 1.5]]
+
+(*The cup needed a 3d Parametric plot using variations of the sin and cos 
+functions. Lets make theta be the parameter for the rotation around the z-axis*)
+
+Cup = 
+  ParametricPlot3D[{t Cos[theta] + .3, t Sin[theta] + .01,t^2 - 2.2}, {t, 1.5, 3}, 
+  {theta, 0, 2 Pi}, Extrusion -> .35, PlotPoints -> {100, 100}]
+  
+(*Plot multiple points in 3d, and connect them using the graphics3D command for the handle.*)
+
+pts = {{3, 0, 5.5}, {3.5, 0, 6}, {4, 0, 6}, {4.5, 0, 6}, {5, 0, 5}, {5, 0, 4}, 
+    {4.5, 0, 3}, {4, 0, 2.5}, {2.5, 0, 1.75}, {2, 0, 1}};
+g = BSplineFunction[pts];
+Handle = ParametricPlot3D[g[u], {u, 0, 5}, PlotStyle -> {Tube[.3]}]
+
+Show[Base, Cup, Handle, PlotRange -> All]
+
+Mug = 
+  RegionUnion[
+    DiscretizeGraphics[Base], 
+    DiscretizeGraphics[Cup], 
+    DiscretizeGraphics[Handle]]
+  
+(*Print 3 Separate caffeine models of different sizes, from the Mathematica Chemical Data library.*)
+
+Caffeine1 = 
+ TransformedRegion[
+  TransformedRegion[
+   RegionResize[ChemicalData["Caffeine", "MeshRegion"], 3.5], 
+   RotationTransform[90 Degree, {0, 0, 1}]], 
+  TranslationTransform[{-48, -26, 30.7}]]
+  
+Caffeine2 = 
+ TransformedRegion[
+  TransformedRegion[
+   RegionResize[ChemicalData["Caffeine", "MeshRegion"], 4.5], 
+   RotationTransform[90 Degree, {0, 0, 1}]], 
+  TranslationTransform[{-47.5, -26, 33}]]
+  
+Caffeine3 = 
+ TransformedRegion[
+  TransformedRegion[
+   RegionResize[ChemicalData["Caffeine", "MeshRegion"], 5.5], 
+   RotationTransform[90 Degree, {0, 0, 1}, {0, 0, 0}]], 
+  TranslationTransform[{-47.5, -26, 35}]]
+  
+Coffee = RegionUnion[Caffeine1, Caffeine2, Caffeine3]  
+  
+CoffeeMug = RegionUnion[Mug, Coffee]
+
+Export[NotebookDirectory[] <> "CoffeeMug.stl", CoffeeMug]  
