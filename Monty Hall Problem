@@ -1,0 +1,53 @@
+Manipulate[
+ i = RandomInteger[{1, 3}];
+ k = If[i == j, {Complement[{1, 2, 3}, {i, j}][RandomInteger[1]]},Complement[{1, 2, 3}, {i, j}] ];
+ (*Sets i to a random integer between 1 and 3. Then set k to open the curtain containing G.*)
+ 
+ Initial = 
+  Graphics[{ Blue, Rectangle[{0, 1}, {1, 2}], 
+    Rectangle[{1.5, 1}, {2.5, 2}], Rectangle[{3, 1}, {4, 2}], White, 
+    Style[Text[1, {.5, 1.5}], 50], Style[Text[2, {2, 1.5}], 50], 
+    Style[Text[3, {3.5, 1.5}], 50]}];
+ (*Initially configure the curtains.*)
+ 
+ Case1 = Graphics[{Style[Text["G", {.5, 1.5}], 60], Blue, 
+    Tooltip[Rectangle[{1.5, 1}, {2.5, 2}], 
+     If[i == 2, Style["$$", 50], Style["G", 50]]], 
+    Tooltip[Rectangle[{3, 1}, {4, 2}], 
+     If[i == 3, Style["$$", 50], Style["G", 50]]], White, 
+    Style[Text[2, {2, 1.5}], 50], Style[Text[3, {3.5, 1.5}], 50]}];
+ (*Select the 1st curtain and open the 2nd or 3rd curtain at random \
+revealing a "G". If you hover over the other curtains with a you will \
+see whether staying with your curtain or switching would win the cash \
+prize.*)
+ 
+ Case2 = Graphics[{Style[Text["G", {2, 1.5}], 60], Blue, 
+    Tooltip[Rectangle[{0, 1}, {1, 2}], 
+     If[i == 1, Style["$$", 50], Style["G", 50]]], 
+    Tooltip[Rectangle[{3, 1}, {4, 2}], 
+     If[i == 3, Style["$$", 50], Style["G", 50]]], White, 
+    Style[Text[1, {.5, 1.5}], 50], Style[Text[3, {3.5, 1.5}], 50]}];
+ (*Select the 2nd curtain and open the 1st or 3rd curtain at random \
+revealing a "G". If you hover over the other curtains with a you will \
+see whether staying with your curtain or switching would win the cash \
+prize.*)
+ 
+ Case3 = Graphics[{Style[Text["G", {3.5, 1.5}], 60], Blue, 
+    Tooltip[Rectangle[{0, 1}, {1, 2}], 
+     If[i == 1, Style["$$", 50], Style["G", 50]]], 
+    Tooltip[Rectangle[{1.5, 1}, {2.5, 2}], 
+     If[i == 2, Style["$$", 50], Style["G", 50]]], White, 
+    Style[Text[1, {.5, 1.5}], 50], Style[Text[2, {2, 1.5}], 50]}];
+ (*Select the 3rd curtain and open the 1st or 2nd curtain at random \
+revealing a "G". If you hover over the other curtains with a you will \
+see whether staying with your curtain or switching would win the cash \
+prize.*)
+ Which[j == 0, Initial, k == {1}, Case1, k == {2}, Case2, k == {3}, 
+  Case3], {{j, 0, "Select a Curtain"}, {1 -> "1", 2 -> "2", 3 -> "3", 
+   0 -> "reset"}, ControlType -> PopupMenu}
+ (*DialogInput[DialogNotebook[{TextCell["Switch or \
+Stay"],Button["Stay",,"Stay",]}]]*)
+ (*Use the which command, so when after a curtain is selected, run \
+the corresponding case. Use a PopupMenu to let the user select a \
+door. *)
+ ]
